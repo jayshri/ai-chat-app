@@ -8,8 +8,13 @@ export default function Home() {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async () => {
+
     if (!input.trim()) return;
+
+    setIsLoading(true);
+
     const userMessage: Message = {
       id: crypto.randomUUID(),
       role: "user",
@@ -41,11 +46,13 @@ export default function Home() {
     };
 
     setMessages((prev) => [...prev, aiResponse]);
+    setIsLoading(false);
   }
   return (
     <div className="chat-container">
       <div className="chat-header">AI Chat App</div>
       <div className="chat-messages">
+        {isLoading && <div className="loading">Loading...</div>}
         {messages.map((message) => (
           <MessageItem key={message.id} message={message} />
         ))}
@@ -54,7 +61,9 @@ export default function Home() {
         <textarea value={input} 
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask Question to AI..." />
-        <button onClick={handleSubmit}>Send</button>
+        <button onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? "..." : "Send"}
+        </button>
       </div>
     </div>
   );
