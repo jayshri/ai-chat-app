@@ -1,12 +1,47 @@
-import styles from "./page.module.css";
+"use client";
+
+import { useState } from "react";
+import { Message } from "@/types/chat";
 import { MessageItem } from "@/components/MessageItem";
 
 export default function Home() {
 
-  const messages = [
-    { id: "1", role: "user", content: "hello", timestamp: Date.now() },
-    { id: "2", role: "assistant", content: "hi there!", timestamp: Date.now() },
-  ]
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const handleSubmit = async () => {
+    if (!input.trim()) return;
+    const userMessage: Message = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: input,
+      timestamp: Date.now(),
+    };
+    // add user message to the chat and clear input textarea
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    // now send the user message to the backend and get the AI response
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: [...messages, userMessage].map(({ role, content }) => ({
+          role,
+          content,
+        })),
+      }),
+    });
+
+    const data = await response.json();
+    // create ai response object and add it to the chat
+    const aiResponse: Message = {
+      id: crypto.randomUUID(),
+      role: "assistant",
+      content: data.reply,
+      timestamp: Date.now(),
+    };
+
+    setMessages((prev) => [...prev, aiResponse]);
+  }
   return (
     <div className="chat-container">
       <div className="chat-header">AI Chat App</div>
@@ -16,8 +51,10 @@ export default function Home() {
         ))}
       </div>
       <div className="chat-input">
-        <textarea placeholder="Ask Question to AI..." />
-        <button>Send</button>
+        <textarea value={input} 
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask Question to AI..." />
+        <button onClick={handleSubmit}>Send</button>
       </div>
     </div>
   );
