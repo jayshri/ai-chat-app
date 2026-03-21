@@ -1,5 +1,9 @@
 import { Message } from "@/types/chat";
-export function MessageItem({message}: Message) => {
+
+type MessageItemProps = {
+  message: Message;
+};
+export function MessageItem({message}: MessageItemProps) {
     return (
         <div className ={message.role === "user" ? "user-message-item" : "ai-message-item"}>
             {message.content}
