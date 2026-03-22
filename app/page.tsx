@@ -89,27 +89,38 @@ export default function Home() {
   return (
     <div className="chat-container">
       <div className="chat-header">AI Chat App
-        <button className="clear-button" onClick={clearMessages}> Clear </button>
+        <button className="clear-button" 
+          onClick={clearMessages}
+          aria-label="Clear chat history"> Clear </button>
       </div>
       
-      <div className="chat-messages">
-        {isLoading && <div className="loading">Loading...</div>}
+      <div className="chat-messages"
+        role="log"
+        aria-live="polite"
+        aria-label="Chat messages"
+      >
+        {isLoading && <div className="loading" aria-label="Loading response">Loading...</div>}
         {messages.map((message) => (
           <MessageItem key={message.id} message={message} />
         ))}
       </div>
       {error && (
-        <div className="error">
+        <div className="error" role="alert">
           {error}
-          <button onClick={() => setError(null)}>dismiss</button>
+          <button aria-label="Dismiss error" onClick={() => setError(null)}>dismiss</button>
         </div>
       )}
       <div className="chat-input">
         <textarea value={input} 
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
+          aria-label="Message input"
+          disabled={isLoading}
           placeholder="Ask Question to AI..." />
-        <button onClick={handleSubmit} disabled={isLoading}>
+        <button onClick={handleSubmit} 
+          disabled={isLoading}
+          aria-label={isLoading ? "Sending message" : "Send message"}
+        >
           {isLoading ? "..." : "Send"}
         </button>
       </div>

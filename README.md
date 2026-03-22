@@ -1,5 +1,5 @@
 # AI Chat App
-This is simple AI chat bot using React and Next.js. This app lets you chat with OpenAI and displays response with storing the previous conversations in the form of chat history. 
+This is simple AI chat bot using React and Next.js. This app lets you chat with OpenAI and displays response with storing the previous conversations in the form of chat history. It stores your chat history between refreshes, supports clearing the conversation, and handles basic accessibility for screen readers.
 
 ## Getting Started
 
