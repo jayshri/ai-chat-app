@@ -9,10 +9,11 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
-
     if (!input.trim()) return;
+    setError(null);
     // set loading state to true and disable api call button until response is received back.
     setIsLoading(true);
 
@@ -26,29 +27,35 @@ export default function Home() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     // now send the user message to the backend and get the AI response
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        messages: [...messages, userMessage].map(({ role, content }) => ({
-          role,
-          content,
-        })),
-      }),
-    });
+    try{
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [...messages, userMessage].map(({ role, content }) => ({
+            role,
+            content,
+          })),
+        }),
+      });
+      const data = await response.json();
+      // create ai response object and add it to the chat and set loading state to false 
+      // to enable api call button again.
+      const aiResponse: Message = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: data.reply,
+        timestamp: Date.now(),
+      };
 
-    const data = await response.json();
-    // create ai response object and add it to the chat and set loading state to false 
-    // to enable api call button again.
-    const aiResponse: Message = {
-      id: crypto.randomUUID(),
-      role: "assistant",
-      content: data.reply,
-      timestamp: Date.now(),
-    };
-
-    setMessages((prev) => [...prev, aiResponse]);
+      setMessages((prev) => [...prev, aiResponse]);
     setIsLoading(false);
+    } catch(error) {
+      setError("Failed to fetch AI response. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+    
   }
 
   // load chat messages from local storage when the component mounts
@@ -64,19 +71,43 @@ export default function Home() {
     localStorage.setItem("chat_messages", JSON.stringify(messages));
   }, [messages]);
 
+  //clear chat messages when clear button is clicked.
+  const clearMessages = () => {
+      if(messages.length > 0) {
+        setMessages([]);
+        localStorage.removeItem("chat_messages");
+    }
+  }
+
+  const handleKeyDown = (e : React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  }
 
   return (
     <div className="chat-container">
-      <div className="chat-header">AI Chat App</div>
+      <div className="chat-header">AI Chat Bot
+        <button className="clear-button" onClick={clearMessages}> Clear </button>
+      </div>
+      
       <div className="chat-messages">
         {isLoading && <div className="loading">Loading...</div>}
         {messages.map((message) => (
           <MessageItem key={message.id} message={message} />
         ))}
       </div>
+      {error && (
+        <div className="error">
+          {error}
+          <button onClick={() => setError(null)}>dismiss</button>
+        </div>
+      )}
       <div className="chat-input">
         <textarea value={input} 
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Ask Question to AI..." />
         <button onClick={handleSubmit} disabled={isLoading}>
           {isLoading ? "..." : "Send"}

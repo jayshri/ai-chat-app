@@ -82,3 +82,47 @@ body {
   font-size: 14px;
   padding: 0 4px;
 }
+.chat-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clear-button {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #666;
+}
+
+.clear-button:hover {
+  border-color: #f44;
+  color: #f44;
+}
+
+.error {
+  background: #fff0f0;
+  border: 1px solid #fcc;
+  color: #c00;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 20px;
+}
+
+.error button {
+  background: none;
+  border: none;
+  color: #c00;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 13px;
+}
