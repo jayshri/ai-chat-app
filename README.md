@@ -10,3 +10,7 @@ This is simple AI chat bot using React and Next.js. This app lets you chat with 
 
 ## Notes
 I used localStorage to store the chat history temporary to keep the setup simple but in production app, I'd replace this with a server-side database so the history persists across multiple devices and users.  
+
+## Styling AI Responses
+I used Markdown to render the AI responses for better readability.  
+I specifically used `react-markdown` with `remark-gfm` to support formatting such as headings, lists, and code blocks.
