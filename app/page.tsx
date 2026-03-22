@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Message } from "@/types/chat";
 import { MessageItem } from "@/components/MessageItem";
 
@@ -10,6 +10,8 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  
 
   const handleSubmit = async () => {
     if (!input.trim()) return;
@@ -85,6 +87,13 @@ export default function Home() {
       handleSubmit();
     }
   }
+  // scroll to the bottom of the chat messages whenever new message is added. 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
 
   return (
     <div className="chat-container">
@@ -99,10 +108,11 @@ export default function Home() {
         aria-live="polite"
         aria-label="Chat messages"
       >
-        {isLoading && <div className="loading" aria-label="Loading response">Loading...</div>}
         {messages.map((message) => (
           <MessageItem key={message.id} message={message} />
         ))}
+        {isLoading && <div className="loading" aria-label="Loading response">Loading...</div>}
+        <div ref={messagesEndRef} />
       </div>
       {error && (
         <div className="error" role="alert">
