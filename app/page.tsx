@@ -88,7 +88,7 @@ export default function Home() {
 
   return (
     <div className="chat-container">
-      <div className="chat-header">AI Chat Bot
+      <div className="chat-header">AI Chat App
         <button className="clear-button" onClick={clearMessages}> Clear </button>
       </div>
       
