@@ -9,12 +9,12 @@ flowchart TD
     UI -->|loads on mount| LS[(localStorage\nchat_messages)]
     UI -->|saves on change| LS
 
-    UI -->|POST /api/chat\n{messages}| API[app/api/chat/route.ts\nAPI Route]
+    UI -->|POST /api/chat - messages| API[app/api/chat/route.ts\nAPI Route]
 
     API -->|reads| ENV[OPENAI_API_KEY\n.env.local]
     API -->|POST chat/completions\ngpt-4o-mini| OpenAI[OpenAI API]
-    OpenAI -->|{reply}| API
-    API -->|{reply}| UI
+    OpenAI -->|reply| API
+    API -->|reply| UI
 
     UI -->|renders| MI[components/MessageItem.tsx]
     MI -->|assistant messages| MD[react-markdown\n+ remark-gfm]
